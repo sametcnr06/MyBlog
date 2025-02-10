@@ -1,0 +1,75 @@
+﻿@model List<MyBlog.Models.ViewModels.KullaniciViewModel>
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin için özel layout
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <h2 class="text-primary fw-bold">Kullanıcı Yönetimi</h2>
+        <div>
+            <a asp-action="KullaniciEkle" class="btn btn-success btn-sm shadow-sm">
+                <i class="fas fa-user-plus me-2"></i> Yeni Kullanıcı Ekle
+            </a>
+            <a asp-action="ArsivlenmisKullanicilar" class="btn btn-outline-danger btn-sm shadow-sm">
+                <i class="fas fa-archive me-2"></i> Arşivlenmiş Kullanıcılar
+            </a>
+        </div>
+    </div>
+
+    <div class="card shadow mt-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Kullanıcı Listesi</h5>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover text-center mb-0">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Ad</th>
+                        <th>Soyad</th>
+                        <th>Rol</th>
+                        <th>Kayıt Tarihi</th>
+                        <th>Güncelleme Tarihi</th>
+                        <th>Silindi Mi?</th>
+                        <th>Silinme Tarihi</th>
+                        <th>İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr class="@((user.IsDeleted ? "table-danger" : ""))">
+                            <td>@user.FirstName</td>
+                            <td>@user.LastName</td>
+                            <td>@string.Join(", ", user.Roles)</td>
+                            <td>@user.CreatedDate.ToString("dd.MM.yyyy")</td>
+                            <td>@user.UpdatedDate?.ToString("dd.MM.yyyy")</td>
+                            <td>@(user.IsDeleted ? "Evet" : "Hayır")</td>
+                            <td>@user.DeletedDate?.ToString("dd.MM.yyyy")</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Duzenle" asp-route-id="@user.Id" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-edit"></i> Düzenle
+                                    </a>
+                                    <form asp-action="Sil" asp-route-id="@user.Id" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Bu kullanıcıyı silmek istediğinizden emin misiniz?');">
+                                            <i class="fas fa-trash"></i> Sil
+                                        </button>
+                                    </form>
+                                    <a asp-action="Detay" asp-route-id="@user.Id" class="btn btn-info btn-sm">
+                                        <i class="fas fa-info-circle"></i> Detay
+                                    </a>
+                                    <a asp-action="RolAtama" asp-route-id="@user.Id" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-user-tag"></i> Rol Atama
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

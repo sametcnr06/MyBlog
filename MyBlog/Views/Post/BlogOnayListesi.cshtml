@@ -1,0 +1,39 @@
+﻿@model List<MyBlog.Entities.Post>
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin layout dosyası
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary">Onay Bekleyen Yazılar</h2>
+    <table class="table table-hover mt-3">
+        <thead>
+            <tr>
+                <th>Başlık</th>
+                <th>Yazar</th>
+                <th>Kategori</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in Model)
+            {
+                <tr>
+                    <td>@post.Title</td>
+                    <td>@post.Author.UserName</td>
+                    <td>@post.Category.CategoryName</td>
+                    <td>
+                        <form asp-action="Onayla" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@post.Id" />
+                            <button class="btn btn-success btn-sm">Onayla</button>
+                        </form>
+                        <form asp-action="Sil" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@post.Id" />
+                            <button class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

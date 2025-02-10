@@ -1,0 +1,38 @@
+﻿@model MyBlog.Models.ViewModels.KullaniciDetayViewModel
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin layout dosyası
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Kullanıcı Detayları</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Profil Resmi -->
+                <div class="col-md-4 text-center">
+                    <img src="@Model.ProfilePhotoPath" class="img-thumbnail rounded-circle" alt="Profil Resmi" style="width: 150px; height: 150px;">
+                </div>
+
+                <!-- Kullanıcı Bilgileri -->
+                <div class="col-md-8">
+                    <h5><strong>Ad:</strong> @Model.FirstName</h5>
+                    <h5><strong>Soyad:</strong> @Model.LastName</h5>
+                    <h5><strong>E-posta:</strong> @Model.Email</h5>
+                    <h5><strong>Roller:</strong> @string.Join(", ", Model.Roles)</h5>
+                    <h5><strong>Kayıt Tarihi:</strong> @Model.CreatedDate?.ToString("dd.MM.yyyy")</h5>
+                    <h5><strong>Güncelleme Tarihi:</strong> @Model.UpdatedDate?.ToString("dd.MM.yyyy")</h5>
+                    <h5><strong>Silinme Tarihi:</strong> @Model.DeletedDate?.ToString("dd.MM.yyyy") ?? "Silinmemiş"</h5>
+                    <h5><strong>Durum:</strong> @(Model.IsDeleted ? "Silinmiş" : "Aktif")</h5>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <a href="@Url.Action("KullaniciListesi", "Admin")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Geri Dön
+            </a>
+        </div>
+    </div>
+</div>

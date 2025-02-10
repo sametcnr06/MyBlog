@@ -1,0 +1,54 @@
+﻿@model MyBlog.Models.ViewModels.AdminProfileViewModel
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin layout dosyası
+    ViewData["Title"] = "Profil";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary">Profil Bilgilerim</h2>
+
+    <form asp-action="Profile" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label">Kullanıcı Adı</label>
+            <input type="text" class="form-control" value="@Model.UserName" disabled />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">E-posta</label>
+            <input asp-for="Email" class="form-control" />
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">İsim</label>
+            <input asp-for="FirstName" class="form-control" />
+            @Html.ValidationMessageFor(model => model.FirstName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Soyisim</label>
+            <input asp-for="LastName" class="form-control" />
+            @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Profil Fotoğrafı</label>
+            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+            {
+                <img src="@Model.PhotoPath" alt="Profil Fotoğrafı" class="img-thumbnail mb-2" style="max-width: 150px;" />
+            }
+            <input type="file" name="ProfilePhoto" class="form-control" />
+            @Html.ValidationMessage("ProfilePhoto", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Rol</label>
+            <input type="text" class="form-control" value="@Model.Role" disabled />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Güncelle</button>
+    </form>
+</div>

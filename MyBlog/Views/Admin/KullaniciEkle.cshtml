@@ -1,0 +1,78 @@
+﻿@model MyBlog.Models.ViewModels.KullaniciEkleViewModel
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin layout dosyası
+    ViewData["Title"] = "Yeni Kullanıcı Ekle";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Yeni Kullanıcı Ekle</h4>
+        </div>
+        <div class="card-body">
+            <form asp-action="KullaniciEkle" method="post">
+                @Html.AntiForgeryToken()
+
+                <!-- Ad -->
+                <div class="mb-3">
+                    <label for="FirstName" class="form-label">Ad:</label>
+                    <input asp-for="FirstName" class="form-control" required />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+
+                <!-- Soyad -->
+                <div class="mb-3">
+                    <label for="LastName" class="form-label">Soyad:</label>
+                    <input asp-for="LastName" class="form-control" required />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+
+                <!-- E-Posta -->
+                <div class="mb-3">
+                    <label for="Email" class="form-label">E-Posta:</label>
+                    <input asp-for="Email" type="email" class="form-control" required />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+                <!-- Şifre -->
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Şifre:</label>
+                    <input asp-for="Password" type="password" class="form-control" required />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <!-- Şifreyi Tekrar Girin -->
+                <div class="mb-3">
+                    <label for="ConfirmPassword" class="form-label">Şifreyi Tekrar Girin:</label>
+                    <input asp-for="ConfirmPassword" type="password" class="form-control" required />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+
+                <!-- Rol Seçin -->
+                <div class="form-group mb-3">
+                    <label>Rol Seçin</label>
+                    <select asp-for="Roles" class="form-control" multiple>
+                        @foreach (var role in ViewBag.Roles as List<string>)
+                        {
+                            if (role != "Admin") // "Admin" rolünü hariç tut
+                            {
+                                <option value="@role">@role</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <!-- Butonlar -->
+                <div class="d-flex justify-content-end">
+                    <a asp-action="KullaniciListesi" class="btn btn-secondary me-3">
+                        <i class="fas fa-arrow-left me-2"></i>İptal
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-user-plus me-2"></i>Kullanıcı Ekle
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

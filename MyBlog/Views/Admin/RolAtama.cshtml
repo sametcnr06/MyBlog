@@ -1,0 +1,46 @@
+﻿@model MyBlog.Models.ViewModels.RolAtamaViewModel
+
+@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin layout dosyası
+}
+
+<div class="container mt-5">
+    <h2 class="text-primary mb-4">Rol Atama</h2>
+    <form asp-action="RolAtama" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserId" />
+
+        <!-- Kullanıcı Bilgisi -->
+        <div class="mb-3">
+            <label class="form-label">Kullanıcı:</label>
+            <input type="text" class="form-control" value="@Model.UserName" disabled />
+        </div>
+
+        <!-- İsim ve Soyisim -->
+        <div class="mb-3">
+            <label class="form-label">Ad Soyad:</label>
+            <input type="text" class="form-control" value="@($"{Model.FirstName} {Model.LastName}")" disabled />
+        </div>
+
+        <!-- Kullanıcı Rollerini Seçme -->
+        <div class="mb-3">
+            <label class="form-label">Roller:</label>
+            @foreach (var role in Model.AvailableRoles)
+            {
+                if (role != "Admin") // Admin rolü yalnızca bir kullanıcıda olmalı
+                {
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="AssignedRoles" value="@role" @(Model.AssignedRoles.Contains(role) ? "checked" : "") />
+                        <label class="form-check-label">@role</label>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- İşlem Butonları -->
+        <div class="d-flex justify-content-end">
+            <a asp-action="KullaniciListesi" class="btn btn-secondary me-3">Geri Dön</a>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+    </form>
+</div>

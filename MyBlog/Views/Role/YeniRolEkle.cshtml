@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    ViewData["Title"] = "Yeni Rol Ekle";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Yeni Rol Ekle</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="YeniRolEkle" method="post">
+                @Html.AntiForgeryToken()
+                <div class="mb-3">
+                    <label for="roleName" class="form-label">Rol Adı</label>
+                    <input type="text" class="form-control" id="roleName" name="roleName" placeholder="Rol adını girin" required />
+                </div>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Ekle
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary ms-2">
+                    <i class="fas fa-arrow-left"></i> Geri Dön
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
