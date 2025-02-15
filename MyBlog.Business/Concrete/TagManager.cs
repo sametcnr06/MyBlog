@@ -34,7 +34,14 @@ namespace MyBlog.Business.Concrete
                 return false;
 
             _context.Tags.Add(tag);
-            return await _context.SaveChangesAsync() > 0;
+                var result = await _context.SaveChangesAsync();
+                return result > 0; // Başarılıysa true döner
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Hata: {ex.Message}"); // Hataları logla
+                return false;
+            }
         }
         // Etiketi günceller.
         public async Task<bool> UpdateTagAsync(Tag tag)
