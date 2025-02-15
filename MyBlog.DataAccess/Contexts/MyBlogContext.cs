@@ -109,6 +109,8 @@ namespace MyBlog.DataAccess.Contexts
             // Identity framework içinde kullanılan UserRole tablosu için birincil anahtar tanımlanır.
             builder.Entity<IdentityUserRole<string>>()
                 .HasKey(ur => new { ur.UserId, ur.RoleId }); // Composite key tanımlandı.
+
+
         }
     }
 }

@@ -1,7 +1,15 @@
 ﻿@model MyBlog.Entities.Tag
 
 @{
-    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    // Admin Layout kullanıyoruz
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Editor/_EditorLayout.cshtml";
+    }
     ViewData["Title"] = "Yeni Etiket Ekle";
 }
 
@@ -11,17 +19,21 @@
             <h5 class="mb-0">Yeni Etiket Ekle</h5>
         </div>
         <div class="card-body">
-            <form asp-action="Create" method="post">
+            <form asp-controller="Tag" asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
+
                 <div class="mb-3">
-                    <label class="form-label">Etiket Adı</label>
-                    <input asp-for="Name" class="form-control" placeholder="Etiket adını girin" required />
-                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <label class="form-label" for="Name">Etiket Adı</label>
+                    <input asp-for="Name" class="form-control" id="Name" placeholder="Etiket adını girin" required />
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Açıklama</label>
-                    <textarea asp-for="Description" class="form-control" placeholder="Açıklama (opsiyonel)"></textarea>
+                    <label class="form-label" for="Description">Açıklama</label>
+                    <textarea asp-for="Description" class="form-control" id="Description" placeholder="Açıklama (opsiyonel)"></textarea>
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
                 </div>
+
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-plus"></i> Ekle
                 </button>
@@ -32,3 +44,9 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

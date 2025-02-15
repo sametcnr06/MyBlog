@@ -1,0 +1,77 @@
+﻿@using MyBlog.Entities;
+
+@model List<Post>
+
+@{
+    Layout = "~/Views/Writer/_WriterLayout.cshtml";
+    ViewData["Title"] = "Yazılarım";
+}
+
+
+<!-- 📌 Arşivlenmiş yazıları listeleyen tablo -->
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Başlık</th> <!-- Yazının başlığı -->
+            <th>Kategori</th> <!-- Yazının kategorisi -->
+            <th>Onay Durumu</th> <!-- Yazının onay durumu -->
+            <th>İşlemler</th> <!-- Kullanıcı tarafından gerçekleştirilebilecek işlemler -->
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any()) // 📌 Eğer liste boş değilse, yazıları ekrana bas
+        {
+            @foreach (var post in Model)
+            {
+                <tr>
+                    <!-- 📌 Yazının başlığını göster -->
+                    <td>@post.Title</td>
+
+                    <!-- 📌 Eğer kategori bilgisi varsa göster, yoksa 'Kategori Yok' yaz -->
+                    <td>@(post.Category != null ? post.Category.CategoryName : "Kategori Yok")</td>
+
+                    <!-- 📌 Onay durumu: Eğer onaylıysa 'Onaylandı', değilse 'Beklemede' olarak göster -->
+                    <td>@(post.IsApproved ? "Onaylandı" : "Beklemede")</td>
+
+                    <td>
+                        <!-- 📌 Yazıyı geri getirme butonu -->
+                        <form asp-action="RestorePost" method="post" onsubmit="return confirmRestore();">
+                            <!-- 📌 Post ID'yi gizli input ile formda gönderiyoruz -->
+                            <input type="hidden" name="postId" value="@post.Id" />
+
+                            <!-- 📌 Eğer yazı zaten aktifse, butonu devre dışı bırak -->
+                            @if (post.IsDeleted)
+                            {
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    Geri Getir
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-secondary btn-sm" disabled>
+                                    Zaten Aktif
+                                </button>
+                            }
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <!-- 📌 Eğer arşivde hiç yazı yoksa kullanıcıya bilgi göster -->
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    Henüz arşivlenmiş bir yazınız bulunmamaktadır.
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- 📌 JavaScript ile 'Geri Getir' işlemi için kullanıcıdan onay isteme -->
+<script>
+    function confirmRestore() {
+        return confirm('Bu yazıyı geri getirmek istiyor musunuz?');
+    }
+</script>

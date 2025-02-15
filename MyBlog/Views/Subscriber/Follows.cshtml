@@ -1,0 +1,92 @@
+﻿@model List<dynamic>
+
+@{
+    Layout = "~/Views/Subscriber/_SubscriberLayout.cshtml";
+    ViewData["Title"] = "Takip Ettiklerim";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 font-weight-bold">Takip Ettiklerim</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-center text-muted">Henüz takip ettiğiniz bir yazar bulunmuyor.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var followed in Model)
+            {
+                var author = followed.Author;
+                var posts = followed.Posts as List<MyBlog.Entities.Post>;
+
+                <div class="col-xl-6 col-lg-6 col-md-12 mb-4">
+                    <div class="card shadow-sm border-0 overflow-hidden h-100">
+                        <div class="card-body d-flex flex-column justify-content-between" style="min-height: 280px;">
+
+                            <!-- 📌 Yazar Bilgileri -->
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="@(string.IsNullOrEmpty(author.PhotoPath) ? "/images/default-profile.png" : author.PhotoPath)"
+                                     alt="Profil Resmi"
+                                     class="me-3"
+                                     style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; margin-right: 20px;">
+
+                                <div>
+                                    <h5 class="card-title m-0">@author.FirstName @author.LastName</h5>
+                                    <p class="text-muted m-0">@author.Email</p>
+                                </div>
+                            </div>
+
+                            <!-- 📌 Takibi Bırak Butonu -->
+                            <form method="post" asp-action="UnfollowAuthor" asp-controller="Subscriber" class="mt-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="authorId" value="@author.Id" />
+                                <button class="btn btn-danger btn-sm">Takibi Bırak</button>
+                            </form>
+
+                            <hr>
+
+                            <!-- 📌 Yazıları Aç/Kapat Butonu -->
+                            <h6 class="font-weight-bold">
+                                <a href="javascript:void(0);" onclick="togglePosts('@author.Id')" class="text-primary">
+                                    Bu Yazara Ait Yazılar
+                                </a>
+                            </h6>
+
+                            <!-- 📌 Yazılar Listesi -->
+                            <div id="posts-@author.Id" style="display: none;">
+                                @if (posts != null && posts.Any())
+                                {
+                                    <ul class="list-group">
+                                        @foreach (var post in posts)
+                                        {
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <a href="/Subscriber/PostDetail/@post.Id" class="text-decoration-none">@post.Title</a>
+                                                <span class="badge bg-primary">@post.Category?.CategoryName</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">Bu yazar henüz yazı paylaşmamış.</p>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<script>
+    function togglePosts(authorId) {
+        var postList = document.getElementById("posts-" + authorId);
+        if (postList.style.display === "none") {
+            postList.style.display = "block";
+        } else {
+            postList.style.display = "none";
+        }
+    }
+</script>

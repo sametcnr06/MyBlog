@@ -1,9 +1,9 @@
-﻿using MyBlog.Business.Abstract;
+﻿using Microsoft.EntityFrameworkCore;
+using MyBlog.Business.Abstract;
 using MyBlog.DataAccess.Contexts;
 using MyBlog.Entities;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MyBlog.Business.Concrete
@@ -15,34 +15,41 @@ namespace MyBlog.Business.Concrete
 
         public TagManager(MyBlogContext context)
         {
-            _context = context; // Dependency Injection ile bağlanıyor.
+            _context = context;
         }
-        // Tüm etiketleri getirir.
+
+        // Tüm etiketleri getir.
         public async Task<List<Tag>> GetAllTagsAsync()
         {
             return await _context.Tags.ToListAsync();
         }
-        // Belirtilen ID'ye sahip etiketi getirir.
+
+        // Belirtilen ID'ye göre etiket getir.
         public async Task<Tag> GetTagByIdAsync(int id)
         {
             return await _context.Tags.FindAsync(id);
         }
+
         // Yeni etiket ekler.
         public async Task<bool> CreateTagAsync(Tag tag)
         {
-            if (tag == null)
-                return false;
+            try
+            {
+                if (tag == null)
+                    return false;
 
-            _context.Tags.Add(tag);
+                await _context.Tags.AddAsync(tag);
                 var result = await _context.SaveChangesAsync();
-                return result > 0; // Başarılıysa true döner
+                return result > 0;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Hata: {ex.Message}"); // Hataları logla
+                // Hataları logla veya yakala
+                Console.WriteLine($"Hata: {ex.Message}");
                 return false;
             }
         }
+
         // Etiketi günceller.
         public async Task<bool> UpdateTagAsync(Tag tag)
         {
@@ -50,9 +57,11 @@ namespace MyBlog.Business.Concrete
                 return false;
 
             _context.Tags.Update(tag);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
-        // Belirtilen ID'ye sahip etiketi siler.
+
+        // Etiketi siler.
         public async Task<bool> DeleteTagAsync(int id)
         {
             var tag = await _context.Tags.FindAsync(id);
@@ -60,7 +69,8 @@ namespace MyBlog.Business.Concrete
                 return false;
 
             _context.Tags.Remove(tag);
-            return await _context.SaveChangesAsync() > 0;
+            var result = await _context.SaveChangesAsync();
+            return result > 0;
         }
     }
 }

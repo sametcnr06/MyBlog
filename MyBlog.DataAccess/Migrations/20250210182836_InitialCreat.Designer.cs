@@ -12,8 +12,8 @@ using MyBlog.DataAccess.Contexts;
 namespace MyBlog.DataAccess.Migrations
 {
     [DbContext(typeof(MyBlogContext))]
-    [Migration("20250208192150_UpdateUserRoleRelations")]
-    partial class UpdateUserRoleRelations
+    [Migration("20250210182836_InitialCreat")]
+    partial class InitialCreat
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -170,10 +170,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ApprovedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ApprovedByUserId1")
+                    b.Property<string>("ApprovedByUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
@@ -198,7 +195,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApprovedByUserId1");
+                    b.HasIndex("ApprovedByUserId");
 
                     b.HasIndex("PostId");
 
@@ -424,10 +421,8 @@ namespace MyBlog.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AuthorId1")
+                    b.Property<string>("AuthorId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CategoryId")
@@ -456,7 +451,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId1");
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("CategoryId");
 
@@ -554,7 +549,7 @@ namespace MyBlog.DataAccess.Migrations
                 {
                     b.HasOne("MyBlog.Entities.Identity.ApplicationUser", "ApprovedByUser")
                         .WithMany()
-                        .HasForeignKey("ApprovedByUserId1");
+                        .HasForeignKey("ApprovedByUserId");
 
                     b.HasOne("MyBlog.Entities.Post", "Post")
                         .WithMany("Comments")
@@ -609,7 +604,9 @@ namespace MyBlog.DataAccess.Migrations
                 {
                     b.HasOne("MyBlog.Entities.Identity.ApplicationUser", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId1");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("MyBlog.Entities.Category", "Category")
                         .WithMany()

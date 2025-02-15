@@ -18,20 +18,34 @@ namespace MyBlog.Controllers
         }
 
         // Tüm rolleri listeleme
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var roles = await _roleService.GetAllRolesAsync();
+            var roles = _roleService.GetList();
+            return View(roles);
 
-            var roleViewModels = roles.Select(role => new RoleViewModel
-            {
-                Name = role.Name,
-                UserCount = role.Users?.Count ?? 0 // Kullanıcı sayısını alırken null kontrolü
-            }).ToList();
+            //var roles = await _roleService.GetAllRolesAsync();
 
-            return View(roleViewModels);
+            //var roleViewModels = roles.Select(role => new RoleViewModel
+            //{
+            //    Name = role.Name,
+            //    UserCount = role.Users?.Count ?? 0 // Kullanıcı sayısını alırken null kontrolü
+            //}).ToList();
+
+            //return View(roleViewModels);
         }
 
-        [HttpGet]
+        //var patientList = _patientDao.GetByMotherChildList().GroupBy(x=>x.CreatedDate).
+    //    Select(group => new PatientStatisticDto
+    //            {
+    //                Date = group.Key, //Tarihe göre gruplama
+    //                MotherCount = group.Count(x => x.MotherId == null), // Anne sayısı
+    //                ChildCount = group.Count(x => x.MotherId != null), // Bebek sayısı
+    //                TotalCount = group.Count() // Anne-bebek toplam sayı
+    //})
+    //            .OrderBy(x => x.Date) // Tarih sıralaması
+    //            .ToList();
+
+    [HttpGet]
         public IActionResult YeniRolEkle()
         {
             return View();
@@ -50,6 +64,9 @@ namespace MyBlog.Controllers
 
             var result = await _roleService.CreateRoleAsync(roleName);
             TempData["Message"] = result ? "Rol başarıyla oluşturuldu." : "Rol oluşturulamadı.";
+
+            //var userRole = _roleService.CreateRoleUserAsync(roleName);
+
 
             return RedirectToAction("Index");
         }
@@ -89,5 +106,13 @@ namespace MyBlog.Controllers
             ViewBag.SelectedRole = roleName;
             return View("FiltreliKullanicilar", userViewModels);
         }
+
+
+        public IActionResult GetRoleListCount()
+        {
+            var roles =  _roleService.GetList();
+            return View(roles);
+        }
+
     }
 }

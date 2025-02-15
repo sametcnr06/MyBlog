@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Blog yazıları ile etiketler arasındaki ilişkileri temsil eder.
-    /// </summary>
+    
+    // Blog yazıları ile etiketler arasındaki ilişkileri temsil eder.
+    
     public class PostTag
     {
         public int PostId { get; set; } // İlişkilendirilmiş yazının ID'si.

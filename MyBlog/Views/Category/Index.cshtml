@@ -1,7 +1,14 @@
 ﻿@model List<MyBlog.Entities.Category>
 
 @{
-    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Editor/_EditorLayout.cshtml";
+    }
     ViewData["Title"] = "Kategoriler";
 }
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Business.Concrete
 {     
-    /// Kategori yönetimi için servis sınıfı.     
+    // Kategori yönetimi için servis sınıfı.     
     public class CategoryManager : ICategoryService
     {
         private readonly MyBlogContext _context;
@@ -16,18 +16,19 @@ namespace MyBlog.Business.Concrete
         public CategoryManager(MyBlogContext context)
         {
             _context = context; // Dependency Injection ile bağlanıyor.
-        }         
-        /// Tüm kategorileri getirir.         
+        }
+
+        // Tüm kategorileri getirir.         
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
             return await _context.Categories.ToListAsync();
         }         
-        /// Belirtilen ID'ye sahip kategoriyi getirir.         
+        // Belirtilen ID'ye sahip kategoriyi getirir.         
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
             return await _context.Categories.FindAsync(id);
         }         
-        /// Yeni kategori ekler.         
+        // Yeni kategori ekler.         
         public async Task<bool> CreateCategoryAsync(Category category)
         {
             if (category == null)
@@ -36,7 +37,7 @@ namespace MyBlog.Business.Concrete
             _context.Categories.Add(category);
             return await _context.SaveChangesAsync() > 0;
         }         
-        /// Kategori günceller.         
+        // Kategori günceller.         
         public async Task<bool> UpdateCategoryAsync(Category category)
         {
             if (category == null)
@@ -45,7 +46,7 @@ namespace MyBlog.Business.Concrete
             _context.Categories.Update(category);
             return await _context.SaveChangesAsync() > 0;
         }         
-        /// Belirtilen ID'ye sahip kategoriyi siler.        
+        // Belirtilen ID'ye sahip kategoriyi siler.        
         public async Task<bool> DeleteCategoryAsync(int id)
         {
             var category = await _context.Categories.FindAsync(id);

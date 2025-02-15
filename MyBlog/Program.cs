@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // DbContext ayarlarý
 builder.Services.AddDbContext<MyBlogContext>(options =>
 {
-    // Veritabaný baðlantýsýný appsettings.json üzerinden al
+    // Veritabaný baðlantýsýný appsettings.json'dan al
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyBlogConnection"));
 });
 
@@ -18,76 +18,90 @@ builder.Services.AddDbContext<MyBlogContext>(options =>
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
 {
     // Parola kurallarýný özelleþtirme
-    options.Password.RequireDigit = true; // Parolada rakam gereksinimi
-    options.Password.RequiredLength = 8; // Minimum parola uzunluðu
-    options.Password.RequireUppercase = true; // Büyük harf gereksinimi
-    options.Password.RequireNonAlphanumeric = true; // Alfasayýsal olmayan karakter gereksinimi
+    options.Password.RequireDigit = true;
+    options.Password.RequiredLength = 8;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
 })
-.AddEntityFrameworkStores<MyBlogContext>() // Identity'nin DbContext ile entegre edilmesi
-.AddDefaultTokenProviders(); // Varsayýlan token saðlayýcýlar
+.AddEntityFrameworkStores<MyBlogContext>()
+.AddDefaultTokenProviders();
 
-// Dependency Injection (DI) ayarlarý
-builder.Services.AddScoped<IUserService, UserManager>(); // IUserService ile UserManager eþleþtirilmesi
-builder.Services.AddScoped<IRoleService, RoleManager>(); // IRoleService ile RoleManager eþleþtirilmesi
-builder.Services.AddScoped<IPostService, PostManager>(); // IPostService ile PostManager eþleþtirilmesi
-builder.Services.AddScoped<ICategoryService, CategoryManager>(); // ICategoryService ile CategoryManager eþleþtirilmesi
-builder.Services.AddScoped<ITagService, TagManager>(); // ITagService ile TagManager eþleþtirilmesi
+// Service (Manager) katmanlarýnýn DI ayarlarý
+builder.Services.AddScoped<IUserService, UserManager>();
+builder.Services.AddScoped<IRoleService, RoleManager>();
+builder.Services.AddScoped<IPostService, PostManager>();
+builder.Services.AddScoped<ICategoryService, CategoryManager>();
+builder.Services.AddScoped<ITagService, TagManager>();
+builder.Services.AddScoped<ICommentService, CommentManager>();
+builder.Services.AddScoped<IFavoriteService, FavoriteManager>();
+builder.Services.AddScoped<INotificationService, NotificationManager>();
 
 // MVC hizmetlerini ekle
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Middleware pipeline ayarlarý
+// Production dýþýndaki ortamlarda özel hata sayfasý
 if (!app.Environment.IsDevelopment())
 {
-    // Üretim ortamý için hata sayfasý
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts(); // HTTP Strict Transport Security
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection(); // HTTPS yönlendirmesi
-app.UseStaticFiles(); // Statik dosyalara izin ver
-app.UseRouting(); // Yönlendirme middleware'i
-app.UseAuthentication(); // Kimlik doðrulama middleware'i
-app.UseAuthorization(); // Yetkilendirme middleware'i
+// HTTPS yönlendirme
+app.UseHttpsRedirection();
 
-// Default route ayarý
+// Statik dosyalar
+app.UseStaticFiles();
+
+// Routing
+app.UseRouting();
+
+// Kimlik doðrulama & yetkilendirme
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Varsayýlan rota
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Admin Paneli route'u
+// Admin Paneli rota örneði
 app.MapControllerRoute(
     name: "admin",
     pattern: "{controller=Admin}/{action=Index}/{id?}");
 
-// Kullanýcý Listesi route'u
+// Kullanýcý Listesi rota örneði
 app.MapControllerRoute(
     name: "admin-kullanici-listesi",
     pattern: "Admin/KullaniciListesi",
     defaults: new { controller = "Admin", action = "KullaniciListesi" });
 
-// Roller ve kullanýcýlar seed iþlemi
+app.MapControllerRoute(
+    name: "writer_routes",
+    pattern: "Writer/{controller=Writer}/{action=Index}/{id?}"
+);
+
+// Varsayýlan kullanýcý ve rollerin seed edilmesi
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
 
     // Rol yönetimi
     var roleManager = serviceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-    string[] roleNames = { "Admin", "Editor", "Writer", "Subscriber" }; // Gerekli roller
+    string[] roleNames = { "Admin", "Editor", "Writer", "Subscriber" };
     foreach (var roleName in roleNames)
     {
-        if (!await roleManager.RoleExistsAsync(roleName)) // Rol varsa eklemez
+        if (!await roleManager.RoleExistsAsync(roleName))
         {
-            await roleManager.CreateAsync(new ApplicationRole { Name = roleName }); // Rol oluþtur
+            await roleManager.CreateAsync(new ApplicationRole { Name = roleName });
         }
     }
 
     // Kullanýcý yönetimi
     var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-    // Admin kullanýcýyý seed et    
+    // Admin kullanýcý oluþturma
     if (await userManager.FindByEmailAsync("samet@blog.com") == null)
     {
         var adminUser = new ApplicationUser
@@ -96,7 +110,7 @@ using (var scope = app.Services.CreateScope())
             Email = "samet@blog.com",
             FirstName = "Samet",
             LastName = "Çýnar",
-            PhotoPath = "default.jpg", // Varsayýlan profil resmi
+            PhotoPath = "default.jpg",
             IsActive = true,
             CreatedDate = DateTime.Now
         };
@@ -104,11 +118,11 @@ using (var scope = app.Services.CreateScope())
         var result = await userManager.CreateAsync(adminUser, "Samet123*");
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(adminUser, "Admin"); // Admin rolü ata
+            await userManager.AddToRoleAsync(adminUser, "Admin");
         }
     }
 
-    // Editor kullanýcýyý seed et
+    // Editor kullanýcý
     if (await userManager.FindByEmailAsync("enver@myblog.com") == null)
     {
         var editorUser = new ApplicationUser
@@ -125,11 +139,11 @@ using (var scope = app.Services.CreateScope())
         var result = await userManager.CreateAsync(editorUser, "Enver123*");
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(editorUser, "Editor"); // Editor rolü ata
+            await userManager.AddToRoleAsync(editorUser, "Editor");
         }
     }
 
-    // Writer kullanýcýyý seed et
+    // Writer kullanýcý
     if (await userManager.FindByEmailAsync("bengu@myblog.com") == null)
     {
         var writerUser = new ApplicationUser
@@ -146,9 +160,9 @@ using (var scope = app.Services.CreateScope())
         var result = await userManager.CreateAsync(writerUser, "Bengusu123*");
         if (result.Succeeded)
         {
-            await userManager.AddToRoleAsync(writerUser, "Writer"); // Writer rolü ata
+            await userManager.AddToRoleAsync(writerUser, "Writer");
         }
     }
 }
 
-app.Run(); // Uygulamayý çalýþtýr
+app.Run();

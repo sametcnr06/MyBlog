@@ -1,2 +1,104 @@
-﻿<h2>Abone Paneli</h2>
-<p>Burada Abone'ye özel bilgiler olacak.</p>
+﻿@using System.Security.Claims
+@model List<MyBlog.Entities.Post>
+
+@{
+    Layout = "~/Views/Subscriber/_SubscriberLayout.cshtml";
+    ViewData["Title"] = "Tüm Yazılar";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 font-weight-bold">Tüm Yazılar</h2>
+
+    <!-- 🔎 Arama Formu -->
+    <form method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" name="searchAuthor" placeholder="Yazar Adı" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="searchCategory" placeholder="Kategori" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <input type="text" name="searchTag" placeholder="Etiket" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100">Ara</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-center text-muted">Henüz hiç yazı eklenmemiş.</p>
+    }
+    else
+    {
+        <!-- 📌 Kullanıcının takip ettiği yazarları belirle -->
+        var followedAuthors = ViewBag.FollowedAuthors as List<string> ?? new List<string>();
+
+        <div class="row">
+            @foreach (var post in Model)
+            {
+                <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
+                    <div class="card card-hover shadow-sm border-0 overflow-hidden">
+                        <div class="position-relative">
+                            <!-- 📌 Kapak Resmi -->
+                            @if (!string.IsNullOrEmpty(post.ImageUrl))
+                            {
+                                <img src="@post.ImageUrl" alt="@post.Title" class="card-img-top" loading="lazy" style="object-fit: cover; height: 200px; width: 100%;">
+                            }
+                            <div class="card-img-overlay d-flex flex-column justify-content-end p-3">
+                                <h5 class="card-title text-white">@post.Title</h5>
+                                <p class="card-text text-white small">
+                                    <i class="fas fa-user"></i> @post.Author?.UserName
+                                </p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-folder"></i> Kategori: @(post.Category?.CategoryName ?? "Bilinmiyor")
+                                </small>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    <i class="fas fa-tags"></i> Etiketler:
+                                    @if (post.PostTags != null && post.PostTags.Any())
+                                    {
+                                        @foreach (var tag in post.PostTags.Select(pt => pt.Tag))
+                                        {
+                                            <span class="badge bg-secondary">@tag?.Name</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Etiket yok</span>
+                                    }
+                                </small>
+                            </p>
+
+                            <!-- 📌 İşlem Butonları -->
+                            <div class="d-flex justify-content-between">
+                                <a href="/Subscriber/PostDetail/@post.Id" class="btn btn-primary btn-sm">Detayları Gör</a>
+
+                                <!-- 📌 Yazar Takip Etme Butonu -->
+                                @if (followedAuthors.Contains(post.AuthorId))
+                                {
+                                    <button class="btn btn-secondary btn-sm" disabled>Takip Ediliyor</button>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-action="FollowAuthor" asp-controller="Subscriber" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="followedUserId" value="@post.AuthorId" />
+                                        <button class="btn btn-success btn-sm">Takip Et</button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

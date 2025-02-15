@@ -45,6 +45,7 @@ namespace MyBlog.DataAccess.Migrations
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DeletedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     About = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -175,7 +176,8 @@ namespace MyBlog.DataAccess.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -288,8 +290,7 @@ namespace MyBlog.DataAccess.Migrations
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     PublishedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
-                    AuthorId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AuthorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -298,11 +299,12 @@ namespace MyBlog.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Posts", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Posts_AspNetUsers_AuthorId1",
-                        column: x => x.AuthorId1,
+                        name: "FK_Posts_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
                         principalSchema: "blog",
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Posts_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -323,8 +325,7 @@ namespace MyBlog.DataAccess.Migrations
                     IsApproved = table.Column<bool>(type: "bit", nullable: false),
                     PostId = table.Column<int>(type: "int", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ApprovedByUserId = table.Column<int>(type: "int", nullable: true),
-                    ApprovedByUserId1 = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ApprovedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -332,8 +333,8 @@ namespace MyBlog.DataAccess.Migrations
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_ApprovedByUserId1",
-                        column: x => x.ApprovedByUserId1,
+                        name: "FK_Comments_AspNetUsers_ApprovedByUserId",
+                        column: x => x.ApprovedByUserId,
                         principalSchema: "blog",
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -427,10 +428,10 @@ namespace MyBlog.DataAccess.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_ApprovedByUserId1",
+                name: "IX_Comments_ApprovedByUserId",
                 schema: "blog",
                 table: "Comments",
-                column: "ApprovedByUserId1");
+                column: "ApprovedByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comments_PostId",
@@ -463,10 +464,10 @@ namespace MyBlog.DataAccess.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Posts_AuthorId1",
+                name: "IX_Posts_AuthorId",
                 schema: "blog",
                 table: "Posts",
-                column: "AuthorId1");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_CategoryId",

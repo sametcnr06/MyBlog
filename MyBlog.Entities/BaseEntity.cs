@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Tüm entity sınıfları için ortak özellikleri içerir.
-    /// </summary>
-    public abstract class BaseEntity
+    // Tüm entity sınıfları için ortak özellikleri içerir.
+    public abstract class BaseEntity :IBaseEntity
     {
-        public int Id { get; set; } // Veritabanındaki birincil anahtar.
-        public DateTime CreatedDate { get; set; } = DateTime.Now; // Kayıt oluşturulma tarihi.
-        public DateTime? UpdatedDate { get; set; } // Kayıt güncellenme tarihi.
+        // Veritabanındaki birincil anahtar.
+        public int Id { get; set; }
+
+        // Kayıt oluşturulma tarihi.
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+
+        // Kayıt güncellenme tarihi.
+        public DateTime? UpdatedDate { get; set; }
     }
 }
-

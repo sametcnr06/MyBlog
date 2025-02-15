@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Bilge Adam Blog</title>
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="/css/sb-admin-2.css" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        /* Tam Sayfa Arka Planı */
+        body {
+            background: linear-gradient(90deg, #4e73df, #224abe);
+            color: #333;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+        /* Minimal Navbar */
+        .navbar {
+            background: transparent;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #fff !important;
+        }
+        .navbar-brand i {
+            margin-right: 0.5rem;
+        }
+        /* Login Kartı */
+        .login-container {
+            min-height: calc(100vh - 56px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .login-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-card .logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .login-card .logo i {
+            font-size: 3rem;
+            color: #4e73df;
+        }
+        .login-card .logo h2 {
+            margin-top: 0.5rem;
+            font-weight: 700;
+            color: #4e73df;
+        }
+        /* Footer Stil */
+        .footer {
+            background-color: transparent;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Minimal Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-book-open"></i> Bilge Adam Blog
+            </a>
+        </div>
+    </nav>
+
+    <!-- Login Form İçin Ortalanmış Kart -->
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <i class="fas fa-user-circle"></i>
+                <h2>@ViewData["Title"]</h2>
+            </div>
+            @RenderBody()
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer py-3">
+        <div class="container text-center">
+            <small>© 2025 - Bilge Adam Blog | Tüm Hakları Saklıdır.</small>
+        </div>
+    </footer>
+
+    <!-- Scriptler -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/sb-admin-2.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

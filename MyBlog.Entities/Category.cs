@@ -8,9 +8,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Blog yazılarının kategorilerini temsil eder.
-    /// </summary>
+    
+    // Blog yazılarının kategorilerini temsil eder.
+    
     public class Category : BaseEntity
     {
         [Required] // Bu alanın doldurulması zorunludur.

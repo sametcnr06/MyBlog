@@ -1,58 +1,59 @@
-﻿@{
-    ViewData["Title"] = "Anasayfa";
+﻿@model List<MyBlog.Entities.Post>
+
+@{
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+    ViewData["Title"] = "Tüm Blog Yazıları";
 }
 
-<!-- Hero Bölümü -->
-<div class="hero bg-primary text-white text-center py-5">
-    <div class="container">
-        <h1 class="display-4">Samet Çınar Hoş Geldiniz</h1>
-        <p class="lead">En iyi içeriklerin bulunduğu blog platformumuza göz atın.</p>
-        <a href="@Url.Action("Index", "Login")" class="btn btn-light btn-lg me-2">Giriş Yap</a>
-        <a href="@Url.Action("Index", "Register")" class="btn btn-outline-light btn-lg">Kayıt Ol</a>
-    </div>
-</div>
+<link rel="stylesheet" href="~/css/custom.css" />
 
-<!-- Son Eklenen Bloglar -->
-<div class="container my-5">
-    <h2 class="mb-4">Son Eklenen Bloglar</h2>
-    <div class="row">
-        <!-- Blog Kartları -->
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Blog Görseli">
-                <div class="card-body">
-                    <h5 class="card-title">Blog Başlığı 1</h5>
-                    <p class="card-text">Bu blog yazısının kısa açıklaması buraya gelecek.</p>
-                    <a href="#" class="btn btn-primary">Devamını Oku</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Blog Görseli">
-                <div class="card-body">
-                    <h5 class="card-title">Blog Başlığı 2</h5>
-                    <p class="card-text">Bu blog yazısının kısa açıklaması buraya gelecek.</p>
-                    <a href="#" class="btn btn-primary">Devamını Oku</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100">
-                <img src="https://via.placeholder.com/350x200" class="card-img-top" alt="Blog Görseli">
-                <div class="card-body">
-                    <h5 class="card-title">Blog Başlığı 3</h5>
-                    <p class="card-text">Bu blog yazısının kısa açıklaması buraya gelecek.</p>
-                    <a href="#" class="btn btn-primary">Devamını Oku</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="container mt-5">
+    <h2 class="text-center mb-5 font-weight-bold">Tüm Blog Yazıları</h2>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-3">
-    <div class="container">
-        <p>&copy; 2025 Blog Platformu. Hiç Bir Hakkımız Saklı Değildir ☺.</p>
-    </div>
-</footer>
+    @if (Model == null || !Model.Any())
+    {
+        <p class="text-center text-muted">Henüz hiç yazı eklenmemiş.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var post in Model)
+            {
+                <div class="col-xl-4 col-lg-6 col-md-6 mb-4">
+                    <div class="card card-hover shadow-sm border-0 overflow-hidden">
+                        <div class="position-relative">
+                            <!-- Lazy load ile performans artışı -->
+                            <img src="@post.ImageUrl" alt="Blog Post Image" class="card-img-top" loading="lazy" style="object-fit: cover; height: 200px; width: 100%;">
+                            <div class="card-img-overlay d-flex flex-column justify-content-end p-3">
+                                <h5 class="card-title">@post.Title</h5>
+                                <p class="card-text small">Yazar: @(post.Author?.UserName ?? "Bilinmiyor")</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <small class="text-muted">Kategori: @(post.Category?.CategoryName ?? "Bilinmiyor")</small>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Etiketler:
+                                    @if (post.PostTags != null && post.PostTags.Any())
+                                    {
+                                        @foreach (var tag in post.PostTags.Select(pt => pt.Tag))
+                                        {
+                                            <span class="badge bg-secondary">@tag?.Name</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Etiket yok</span>
+                                    }
+                                </small>
+                            </p>
+                            <a href="/Home/PostDetail/@post.Id" class="btn btn-primary btn-sm">Detayları Gör</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

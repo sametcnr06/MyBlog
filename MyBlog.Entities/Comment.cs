@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Blog yazılarına yapılan yorumları temsil eder.
-    /// </summary>
+    
+    // Blog yazılarına yapılan yorumları temsil eder.
+    
     public class Comment : BaseEntity
     {
         [Required] // Bu alanın doldurulması zorunludur.

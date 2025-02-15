@@ -1,0 +1,61 @@
+﻿@using System.Security.Claims
+@model MyBlog.Entities.Post
+
+@{
+    Layout = "~/Views/Home/_HomeLayout.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-5">
+    <!-- 📌 Gönderi Kartı -->
+    <div class="card shadow-sm mb-5">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title">
+        }
+        <div class="card-body">
+            <h2 class="card-title">@Model.Title</h2>
+            <p class="card-text text-muted">
+                <i class="fas fa-user"></i> @(Model.Author?.UserName ?? "Bilinmiyor")
+                <span class="mx-2">|</span>
+                <i class="fas fa-folder"></i> @(Model.Category?.CategoryName ?? "Bilinmiyor")
+            </p>
+            <hr>
+            <p class="card-text">
+                @Html.Raw(Model.Content)
+            </p>
+        </div>
+    </div>
+
+    <!-- 📌 Yorumları Listele -->
+    <div class="mt-4">
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedDate)) // 📌 En yeni yorumlar en üstte
+            {
+                <div class="border p-2 mb-2">
+                    <p>
+                        <strong>@(comment.User?.UserName ?? "Anonim Kullanıcı")</strong>: @comment.Content
+                    </p>
+                    <small class="text-muted">
+                        <i class="far fa-clock"></i> @comment.CreatedDate.ToString("dd MMM yyyy HH:mm")
+                    </small>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="alert alert-info" role="alert">
+                Henüz yorum yok.
+            </div>
+        }
+    </div>
+
+    <!-- 📌 Giriş Yap Butonu -->
+    <div class="text-center mt-4">
+        <p class="text-muted">Yorum yapmak için giriş yapmalısınız.</p>
+        <a href="/Account/Login" class="btn btn-primary">
+            <i class="fas fa-sign-in-alt"></i> Giriş Yap
+        </a>
+    </div>
+</div>

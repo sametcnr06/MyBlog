@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Controllers
 {
-    [Authorize(Roles = "Admin")] // Sadece admin yetkisi olanlar erişebilir
+    // Etiket (Tag) yönetimi için Controller. Sadece Admin ve Editor rolüne açıktır.
+    [Authorize(Roles = "Admin,Editor")]
     public class TagController : Controller
     {
         private readonly ITagService _tagService;
@@ -16,20 +17,22 @@ namespace MyBlog.Controllers
             _tagService = tagService;
         }
 
-        // 📌 **Tüm etiketleri listeleme**
+        // Tüm etiketleri listeleyen action. GET /Tag/Index
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var tags = await _tagService.GetAllTagsAsync();
             return View(tags);
         }
 
-        // 📌 **Yeni etiket ekleme - GET**
+        // Yeni etiket ekleme formunu gösterir. GET /Tag/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // 📌 **Yeni etiket ekleme - POST**
+        // Yeni etiket ekleme işlemi (POST). /Tag/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Tag tag)
@@ -40,20 +43,29 @@ namespace MyBlog.Controllers
             }
 
             var result = await _tagService.CreateTagAsync(tag);
-            TempData["Message"] = result ? "Etiket başarıyla eklendi." : "Etiket eklenemedi.";
-            return RedirectToAction("Index");
-        }
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Etiket başarıyla eklendi.";
+                return RedirectToAction("Index");
+            }
 
-        // 📌 **Etiket düzenleme - GET**
-        public async Task<IActionResult> Edit(int id)
-        {
-            var tag = await _tagService.GetTagByIdAsync(id);
-            if (tag == null) return NotFound();
-
+            TempData["ErrorMessage"] = "Etiket eklenirken bir hata oluştu.";
             return View(tag);
         }
 
-        // 📌 **Etiket düzenleme - POST**
+        // Etiket düzenleme formu (GET). /Tag/Edit/5
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var tag = await _tagService.GetTagByIdAsync(id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+            return View(tag);
+        }
+
+        // Etiket düzenleme işlemi (POST). /Tag/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Tag tag)
@@ -64,16 +76,31 @@ namespace MyBlog.Controllers
             }
 
             var result = await _tagService.UpdateTagAsync(tag);
-            TempData["Message"] = result ? "Etiket başarıyla güncellendi." : "Etiket güncellenemedi.";
-            return RedirectToAction("Index");
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Etiket başarıyla güncellendi.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["ErrorMessage"] = "Etiket güncellenirken bir hata oluştu.";
+            return View(tag);
         }
 
-        // 📌 **Etiket silme işlemi**
+        // Etiket silme işlemi (POST). /Tag/Delete/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _tagService.DeleteTagAsync(id);
-            TempData["Message"] = result ? "Etiket başarıyla silindi." : "Etiket silinemedi.";
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Etiket başarıyla silindi.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Etiket silinirken bir hata oluştu.";
+            }
+
             return RedirectToAction("Index");
         }
     }

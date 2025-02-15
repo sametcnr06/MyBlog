@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 using MyBlog.Business.Abstract;
 using MyBlog.Entities;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace MyBlog.Controllers
 {
-    [Authorize(Roles = "Admin")] // Sadece Admin yetkisi olanlar erişebilir
+    [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor yetkisi olanlar erişebilir
     public class BlogController : Controller
     {
         private readonly IPostService _postService;
@@ -41,7 +42,16 @@ namespace MyBlog.Controllers
         [HttpPost]
         public async Task<IActionResult> Sil(int id)
         {
-            var result = await _postService.DeletePostAsync(id);
+            // Mevcut oturumdaki yazarın ID'sini al
+            var writerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Eğer kullanıcı oturum açmamışsa hata döndür
+            if (string.IsNullOrEmpty(writerId))
+                return Unauthorized();
+
+            // Post silme işlemini çağır (id ve writerId ile)
+            var result = await _postService.DeletePostAsync(id, writerId);
+
             TempData["Message"] = result ? "Yazı silindi." : "Yazı silinemedi.";
             return RedirectToAction("BlogListele");
         }

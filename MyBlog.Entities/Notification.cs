@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Kullanıcılara gönderilen bildirimleri temsil eder.
-    /// </summary>
+    
+    // Kullanıcılara gönderilen bildirimleri temsil eder.
+    
     public class Notification : BaseEntity
     {
         public string UserId { get; set; } // Bildirimi alan kullanıcının ID'si.

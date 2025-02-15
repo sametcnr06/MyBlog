@@ -1,0 +1,65 @@
+﻿@using System.Security.Claims
+@model MyBlog.Entities.Post
+
+@{
+    Layout = "~/Views/Writer/_WriterLayout.cshtml";
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="container mt-4">
+    <!-- 📌 Başlık ve Yazar Bilgisi -->
+    <h2>@Model.Title</h2>
+    <p class="text-muted">Yazar: @(Model.Author?.UserName ?? "Bilinmiyor") | Kategori: @(Model.Category?.CategoryName ?? "Bilinmiyor")</p>
+
+    <!-- 📌 Kapak Resmi -->
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded mb-3" />
+    }
+
+    <!-- 📌 İçerik -->
+    <p>@Html.Raw(Model.Content)</p>
+
+    <!-- 📌 Kullanıcıyı takip et / Takibi bırak butonu -->
+    @if (ViewBag.WriterId != null && Model.AuthorId != null && ViewBag.WriterId != Model.AuthorId)
+    {
+        <form asp-action="@(ViewBag.IsFollowing ? "UnfollowUser" : "FollowUser")" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="followedUserId" value="@Model.AuthorId" />
+            <button type="submit" class="btn @(ViewBag.IsFollowing ? "btn-danger" : "btn-primary")">
+                @(ViewBag.IsFollowing ? "Takibi Bırak" : "Takip Et")
+            </button>
+        </form>
+    }
+
+    <hr />
+
+    <!-- 📌 Yorum Yapma Alanı -->
+    <h4>Yorumlar</h4>
+    <form asp-action="AddComment" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="postId" value="@Model.Id" />
+        <textarea name="commentText" class="form-control" rows="3" placeholder="Yorumunuzu yazın..." required></textarea>
+        <button type="submit" class="btn btn-success mt-2">Yorum Yap</button>
+    </form>
+
+    <!-- 📌 Yorumları Listele -->
+    <div class="mt-4">
+        @if (Model.Comments != null && Model.Comments.Any())
+        {
+            @foreach (var comment in Model.Comments.OrderByDescending(c => c.CreatedDate)) // En yeni yorumlar üste
+            {
+                <div class="border p-2 mb-2">
+                    <p>
+                        <strong>@(comment.User?.UserName ?? "Anonim Kullanıcı")</strong>: @comment.Content
+                    </p>
+                    <small class="text-muted">@comment.CreatedDate.ToString("dd MMM yyyy HH:mm")</small>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Henüz yorum yapılmamış.</p>
+        }
+    </div>
+</div>

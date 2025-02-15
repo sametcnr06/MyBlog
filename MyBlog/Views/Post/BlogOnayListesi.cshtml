@@ -1,7 +1,12 @@
 ﻿@model List<MyBlog.Entities.Post>
 
-@{
-    Layout = "~/Views/Admin/_AdminLayout.cshtml"; // Admin layout dosyası
+@if (User.IsInRole("Admin"))
+{
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+else
+{
+    Layout = "~/Views/Editor/_EditorLayout.cshtml";
 }
 
 <div class="container mt-4">

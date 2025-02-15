@@ -1,42 +1,84 @@
 ﻿@{
+    Layout = "~/Views/Register/_RegisterLayout.cshtml";
     ViewData["Title"] = "Kayıt Ol";
 }
 
-<h2>Kayıt Ol</h2>
+<h2 class="text-center mb-4">Kayıt Ol</h2>
 
 <form asp-action="Index" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="firstName">Ad</label>
-        <input type="text" name="firstName" id="firstName" class="form-control" required />
+    <!-- Ad Alanı -->
+    <div class="mb-3">
+        <label for="firstName" class="form-label">Ad</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-user"></i>
+            </span>
+            <input type="text" name="firstName" id="firstName" class="form-control" placeholder="Adınızı giriniz" required />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="lastName">Soyad</label>
-        <input type="text" name="lastName" id="lastName" class="form-control" required />
+    <!-- Soyad Alanı -->
+    <div class="mb-3">
+        <label for="lastName" class="form-label">Soyad</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-user"></i>
+            </span>
+            <input type="text" name="lastName" id="lastName" class="form-control" placeholder="Soyadınızı giriniz" required />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="email">E-posta</label>
-        <input type="email" name="email" id="email" class="form-control" required />
+    <!-- E-posta Alanı -->
+    <div class="mb-3">
+        <label for="email" class="form-label">E-posta</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-envelope"></i>
+            </span>
+            <input type="email" name="email" id="email" class="form-control" placeholder="Email adresinizi giriniz" required />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="username">Kullanıcı Adı</label>
-        <input type="text" name="username" id="username" class="form-control" required />
+    <!-- Kullanıcı Adı Alanı -->
+    <div class="mb-3">
+        <label for="username" class="form-label">Kullanıcı Adı</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-user-tag"></i>
+            </span>
+            <input type="text" name="username" id="username" class="form-control" placeholder="Kullanıcı adınızı giriniz" required />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="password">Şifre</label>
-        <input type="password" name="password" id="password" class="form-control" required />
+    <!-- Şifre Alanı -->
+    <div class="mb-3">
+        <label for="password" class="form-label">Şifre</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-lock"></i>
+            </span>
+            <input type="password" name="password" id="password" class="form-control" placeholder="Şifrenizi giriniz" required />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label for="photoFile">Profil Fotoğrafı</label>
-        <input type="file" name="photoFile" id="photoFile" class="form-control" required />
+    <!-- Profil Fotoğrafı Alanı -->
+    <div class="mb-3">
+        <label for="photoFile" class="form-label">Profil Fotoğrafı</label>
+        <div class="input-group">
+            <span class="input-group-text">
+                <i class="fas fa-image"></i>
+            </span>
+            <input type="file" name="photoFile" id="photoFile" class="form-control" required />
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Kayıt Ol</button>
+    <!-- Kayıt Ol Butonu -->
+    <div class="d-grid mb-3">
+        <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+    </div>
 
-    <p>Zaten bir hesabınız var mı? <a asp-controller="Login" asp-action="Index">Giriş Yap</a></p>
-
+    <!-- Giriş Yap Yönlendirme -->
+    <div class="text-center">
+        <p>Zaten bir hesabınız var mı? <a asp-controller="Login" asp-action="Index">Giriş Yap</a></p>
+    </div>
 </form>

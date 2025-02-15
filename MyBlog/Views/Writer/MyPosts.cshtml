@@ -1,0 +1,97 @@
+﻿@model List<MyBlog.Entities.Post>
+
+@{
+    Layout = "~/Views/Writer/_WriterLayout.cshtml";
+    ViewData["Title"] = "Yazılarım";
+}
+
+<div class="container mt-4">
+    <h2>Yazılarım</h2>
+
+    <!-- 📌 Arşivlenmiş yazılar sayfasına gitmek için buton -->
+    <a asp-action="ArchivedPosts" class="btn btn-secondary mb-3">Arşivlenmiş Yazılar</a>
+
+    <!-- 📌 Yazıları listeleyen tablo -->
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th>Başlık</th> <!-- Yazının başlığı -->
+                <th>Kategori</th> <!-- Yazının kategorisi -->
+                <th>Onay Durumu</th> <!-- Yazının onaylanıp onaylanmadığı -->
+                <th>Silinme Durumu</th> <!-- Yazının aktif mi arşivde mi olduğu -->
+                <th>İşlemler</th> <!-- Yazı üzerinde yapılacak işlemler -->
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any()) // 📌 Eğer listede yazı varsa ekrana bas
+            {
+                @foreach (var p in Model)
+                {
+                    <tr>
+                        <!-- 📌 Yazının başlığını göster -->
+                        <td>@p.Title</td>
+
+                        <!-- 📌 Kategori boş olabilir, hata almamak için kontrol eklendi -->
+                        <td>@(p.Category != null ? p.Category.CategoryName : "Kategori Yok")</td>
+
+                        <!-- 📌 Yazının onay durumu -->
+                        <td>@(p.IsApproved ? "Onaylandı" : "Onay Bekliyor")</td>
+
+                        <!-- 📌 Yazının silinme durumu -->
+                        <td>@(p.IsDeleted ? "Arşivlenmiş" : "Aktif")</td>
+
+                        <td>
+                            <!-- 📌 Yazıyı düzenleme butonu -->
+                            <form asp-action="EditPost" asp-route-id="@p.Id" method="get" class="d-inline">
+                                <button class="btn btn-warning btn-sm">Düzenle</button>
+                            </form>
+
+                            <!-- 📌 Eğer yazı arşivlenmemişse, silme butonu göster -->
+                            @if (!p.IsDeleted)
+                            {
+                                <form asp-action="DeletePost" method="post" class="d-inline" onsubmit="return confirmDelete();">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="postId" value="@p.Id" />
+                                    <button class="btn btn-danger btn-sm">
+                                        Sil
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <!-- 📌 Eğer yazı arşivlenmişse, geri getirme butonu göster -->
+                                <form asp-action="RestorePost" method="post" class="d-inline" onsubmit="return confirmRestore();">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="postId" value="@p.Id" />
+                                    <button class="btn btn-success btn-sm">
+                                        Geri Getir
+                                    </button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <!-- 📌 Eğer yazı yoksa kullanıcıya bilgilendirme mesajı -->
+                <tr>
+                    <td colspan="5" class="text-center text-muted">
+                        Henüz yazınız bulunmamaktadır.
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- 📌 JavaScript ile silme ve geri alma işlemlerini kullanıcıdan onay alma -->
+<script>
+    function confirmDelete() {
+        return confirm('Yazıyı silmek istediğinize emin misiniz?');
+    }
+
+    function confirmRestore() {
+        return confirm('Yazıyı geri getirmek istediğinize emin misiniz?');
+    }
+</script>

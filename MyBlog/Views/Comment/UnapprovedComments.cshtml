@@ -1,0 +1,52 @@
+﻿@model List<MyBlog.Entities.Comment>
+
+@{
+    // Dilersen sabit Admin layout
+    // Layout = "~/Views/Admin/_AdminLayout.cshtml";
+
+    // Veya run-time rol bakarak Admin/Editor layout seç
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Editor/_EditorLayout.cshtml";
+    }
+
+    ViewData["Title"] = "Onay Bekleyen Yorumlar";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary">Onay Bekleyen Yorumlar</h2>
+    <table class="table table-hover mt-3">
+        <thead>
+            <tr>
+                <th>Yorum</th>
+                <th>Yazan Kullanıcı</th>
+                <th>Yazının Başlığı</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td>@c.Content</td>
+                    <td>@c.User?.UserName</td>
+                    <td>@c.Post?.Title</td>
+                    <td>
+                        <form asp-action="Approve" asp-controller="Comment" method="post" class="d-inline">
+                            <input type="hidden" name="commentId" value="@c.Id" />
+                            <button class="btn btn-success btn-sm">Onayla</button>
+                        </form>
+                        <form asp-action="Delete" asp-controller="Comment" method="post" class="d-inline">
+                            <input type="hidden" name="commentId" value="@c.Id" />
+                            <button class="btn btn-danger btn-sm">Sil</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

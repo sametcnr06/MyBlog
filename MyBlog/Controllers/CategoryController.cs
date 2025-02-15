@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Controllers
 {
-    [Authorize(Roles = "Admin")] // Sadece Admin yetkisi olanlar erişebilir.
+    [Authorize(Roles = "Admin,Editor")] // Sadece Admin ve Editor yetkisi olanlar erişebilir.
     public class CategoryController : Controller
     {
         private readonly ICategoryService _categoryService;

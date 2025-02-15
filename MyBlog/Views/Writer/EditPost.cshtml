@@ -1,0 +1,95 @@
+﻿@model MyBlog.Entities.Post
+@using MyBlog.Entities
+
+@{
+    Layout = "~/Views/Writer/_WriterLayout.cshtml";
+    ViewData["Title"] = "Yazı Düzenle";
+}
+
+<div class="container mt-4">
+    <h2>Yazı Düzenle</h2>
+
+    <form asp-action="EditPost" asp-controller="Writer" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+
+        <!-- Post Id -->
+        <input type="hidden" asp-for="Id" />
+
+        <!-- Başlık -->
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <!-- İçerik -->
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label"></label>
+            <textarea asp-for="Content" class="form-control"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <!-- Kategori -->
+        <div class="mb-3">
+            <label asp-for="CategoryId" class="form-label">Kategori</label>
+            <select asp-for="CategoryId" class="form-control">
+                @if (ViewBag.Categories != null)
+                {
+                    foreach (var cat in ViewBag.Categories as List<Category>)
+                    {
+                        if (Model.CategoryId == cat.Id)
+                        {
+                            <option value="@cat.Id" selected="selected">@cat.CategoryName</option>
+                        }
+                        else
+                        {
+                            <option value="@cat.Id">@cat.CategoryName</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Resim -->
+        <div class="mb-3">
+            <label class="form-label">Kapak Resmi</label>
+            <input type="file" name="ImageFile" class="form-control" />
+            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                <div class="mt-2">
+                    <img src="@Model.ImageUrl" alt="Mevcut Resim" style="max-width: 100%; height: auto;" />
+                </div>
+            }
+        </div>
+
+        <!-- Etiketler -->
+        <div class="mb-3">
+            <label class="form-label">Etiketler (Opsiyonel)</label>
+            <select name="selectedTagIds" multiple class="form-control">
+                @if (ViewBag.Tags != null)
+                {
+                    var selectedTags = Model.PostTags?.Select(pt => pt.TagId).ToList() ?? new List<int>();
+                    foreach (var tag in ViewBag.Tags as List<Tag>)
+                    {
+                        if (selectedTags.Contains(tag.Id))
+                        {
+                            <option value="@tag.Id" selected="selected">@tag.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@tag.Id">@tag.Name</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+        <a asp-action="MyPosts" class="btn btn-secondary ms-2">İptal</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

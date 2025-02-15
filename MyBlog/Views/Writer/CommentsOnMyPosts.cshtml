@@ -1,0 +1,34 @@
+﻿@model List<MyBlog.Entities.Comment>
+
+@{
+    // Yazar Paneli layout
+    Layout = "~/Views/Writer/_WriterLayout.cshtml";
+    ViewData["Title"] = "Yazılarıma Gelen Yorumlar";
+}
+
+<div class="container mt-4">
+    <h2>Yazılarıma Gelen Yorumlar</h2>
+    <table class="table table-hover mt-3">
+        <thead>
+            <tr>
+                <th>Yazı Başlığı</th>
+                <th>Yorum İçeriği</th>
+                <th>Yorum Yapan</th>
+                <th>Onay Durumu</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in Model)
+            {
+                <tr>
+                    <td>@comment.Post?.Title</td>
+                    <td>@comment.Content</td>
+                    <td>@comment.User?.UserName</td>
+                    <td>
+                        @(comment.IsApproved ? "Onaylanmış" : "Onay Bekliyor")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

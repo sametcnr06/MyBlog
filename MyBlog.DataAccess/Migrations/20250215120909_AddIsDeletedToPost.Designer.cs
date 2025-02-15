@@ -12,8 +12,8 @@ using MyBlog.DataAccess.Contexts;
 namespace MyBlog.DataAccess.Migrations
 {
     [DbContext(typeof(MyBlogContext))]
-    [Migration("20250206221614_AddDeletedDateToApplicationUser")]
-    partial class AddDeletedDateToApplicationUser
+    [Migration("20250215120909_AddIsDeletedToPost")]
+    partial class AddIsDeletedToPost
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -105,16 +105,15 @@ namespace MyBlog.DataAccess.Migrations
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId", "RoleId");
 
-                    b.HasIndex("ApplicationUserId");
-
-                    b.HasIndex("RoleId");
-
                     b.ToTable("AspNetUserRoles", "blog");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUserRole<string>");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -171,10 +170,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int?>("ApprovedByUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ApprovedByUserId1")
+                    b.Property<string>("ApprovedByUserId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Content")
@@ -199,7 +195,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApprovedByUserId1");
+                    b.HasIndex("ApprovedByUserId");
 
                     b.HasIndex("PostId");
 
@@ -425,10 +421,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("AuthorId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("AuthorId1")
+                    b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("CategoryId")
@@ -441,7 +434,13 @@ namespace MyBlog.DataAccess.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<DateTime?>("PublishedDate")
@@ -457,7 +456,7 @@ namespace MyBlog.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AuthorId1");
+                    b.HasIndex("AuthorId");
 
                     b.HasIndex("CategoryId");
 
@@ -506,6 +505,15 @@ namespace MyBlog.DataAccess.Migrations
                     b.ToTable("Tags", "blog");
                 });
 
+            modelBuilder.Entity("MyBlog.Entities.Identity.ApplicationUserRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
+
+                    b.HasIndex("RoleId");
+
+                    b.HasDiscriminator().HasValue("ApplicationUserRole");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("MyBlog.Entities.Identity.ApplicationRole", null)
@@ -533,25 +541,6 @@ namespace MyBlog.DataAccess.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
-                {
-                    b.HasOne("MyBlog.Entities.Identity.ApplicationUser", null)
-                        .WithMany("UserRoles")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("MyBlog.Entities.Identity.ApplicationRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MyBlog.Entities.Identity.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.HasOne("MyBlog.Entities.Identity.ApplicationUser", null)
@@ -565,7 +554,7 @@ namespace MyBlog.DataAccess.Migrations
                 {
                     b.HasOne("MyBlog.Entities.Identity.ApplicationUser", "ApprovedByUser")
                         .WithMany()
-                        .HasForeignKey("ApprovedByUserId1");
+                        .HasForeignKey("ApprovedByUserId");
 
                     b.HasOne("MyBlog.Entities.Post", "Post")
                         .WithMany("Comments")
@@ -620,7 +609,7 @@ namespace MyBlog.DataAccess.Migrations
                 {
                     b.HasOne("MyBlog.Entities.Identity.ApplicationUser", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId1");
+                        .HasForeignKey("AuthorId");
 
                     b.HasOne("MyBlog.Entities.Category", "Category")
                         .WithMany()
@@ -650,6 +639,30 @@ namespace MyBlog.DataAccess.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("MyBlog.Entities.Identity.ApplicationUserRole", b =>
+                {
+                    b.HasOne("MyBlog.Entities.Identity.ApplicationRole", "Role")
+                        .WithMany("Users")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyBlog.Entities.Identity.ApplicationUser", "User")
+                        .WithMany("UserRoles")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MyBlog.Entities.Identity.ApplicationRole", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("MyBlog.Entities.Identity.ApplicationUser", b =>

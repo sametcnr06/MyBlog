@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Blog yazıları ile kategoriler arasındaki ilişkileri temsil eder.
-    /// </summary>
-    public class PostCategory
+    
+    // Blog yazıları ile kategoriler arasındaki ilişkileri temsil eder.
+    
+    public class PostCategory : IBaseEntity
     {
         public int PostId { get; set; } // İlişkilendirilmiş yazının ID'si.
         public Post Post { get; set; } // İlişkilendirilmiş yazı.

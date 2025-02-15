@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MyBlog.Entities
 {
-    /// <summary>
-    /// Bildirimin türünü belirtir (Örneğin, Yorum, Yeni Yazı, Takip).
-    /// </summary>
+    
+    // Bildirimin türünü belirtir (Örneğin, Yorum, Yeni Yazı, Takip).
+    
     public enum NotificationType
     {
         Comment = 1, // Yorum bildirimi

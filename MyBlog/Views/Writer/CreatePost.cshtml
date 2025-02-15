@@ -1,0 +1,73 @@
+﻿@using MyBlog.Entities
+@model MyBlog.Entities.Post
+
+@{
+    Layout = "~/Views/Writer/_WriterLayout.cshtml";
+    ViewData["Title"] = "Yeni Yazı Ekle";
+}
+
+<div class="container mt-4">
+    <h2>Yeni Yazı Ekle</h2>
+
+    <!-- Bu form WriterController -> CreatePost metoduna gidecek -->
+    <form asp-action="CreatePost" asp-controller="Writer" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken() <!-- CSRF koruması -->
+        <!-- Yazı Başlığı -->
+        <div class="mb-3">
+            <label asp-for="Title" class="form-label"></label>
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+
+        <!-- Yazı İçeriği -->
+        <div class="mb-3">
+            <label asp-for="Content" class="form-label"></label>
+            <textarea asp-for="Content" class="form-control"></textarea>
+            <span asp-validation-for="Content" class="text-danger"></span>
+        </div>
+
+        <!-- Kategori Seçimi -->
+        <div class="mb-3">
+            <label asp-for="CategoryId" class="form-label">Kategori</label>
+            <select asp-for="CategoryId" class="form-control">
+                <option value="">Kategori Seçin</option>
+                @if (ViewBag.Categories is List<Category> categories && categories.Any())
+                {
+                    foreach (var cat in categories)
+                    {
+                        <option value="@cat.Id">@cat.CategoryName</option>
+                    }
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="text-danger"></span>
+        </div>
+
+        <!-- Resim Yükleme -->
+        <div class="mb-3">
+            <label class="form-label">Kapak Resmi</label>
+            <input type="file" name="ImageFile" class="form-control" />
+        </div>
+
+        <!-- Etiket Seçimi (opsiyonel, çoklu) -->
+        <div class="mb-3">
+            <label class="form-label">Etiketler (Opsiyonel)</label>
+            <select name="selectedTagIds" multiple class="form-control">
+                @if (ViewBag.Tags is List<Tag> tags && tags.Any())
+                {
+                    foreach (var tag in tags)
+                    {
+                        <option value="@tag.Id">@tag.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

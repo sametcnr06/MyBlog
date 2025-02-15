@@ -1,7 +1,15 @@
 ﻿@model List<MyBlog.Entities.Tag>
 
 @{
-    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    if (User.IsInRole("Admin"))
+    {
+        Layout = "~/Views/Admin/_AdminLayout.cshtml";
+    }
+    else
+    {
+        Layout = "~/Views/Editor/_EditorLayout.cshtml";
+    }
+    ViewData["Title"] = "Etiket Yönetimi";
 }
 
 <div class="container mt-4">
@@ -17,6 +25,7 @@
             <tr>
                 <th>Etiket Adı</th>
                 <th>Açıklama</th>
+                <th>Oluşturma Tarihi</th>
                 <th>İşlemler</th>
             </tr>
         </thead>
@@ -26,8 +35,9 @@
                 <tr>
                     <td>@tag.Name</td>
                     <td>@tag.Description</td>
+                    <td>@tag.CreatedDate.ToShortDateString()</td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@tag.Id" class="btn btn-warning btn-sm">
+                        <a asp-action="Edit" asp-route-id="@tag.Id" class="btn btn-warning btn-sm me-1">
                             <i class="fas fa-edit"></i> Düzenle
                         </a>
                         <form asp-action="Delete" asp-route-id="@tag.Id" method="post" class="d-inline">

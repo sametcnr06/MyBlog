@@ -12,8 +12,8 @@ using MyBlog.DataAccess.Contexts;
 namespace MyBlog.DataAccess.Migrations
 {
     [DbContext(typeof(MyBlogContext))]
-    [Migration("20250208202603_UpdatePostAndCommentRelations")]
-    partial class UpdatePostAndCommentRelations
+    [Migration("20250210174038_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

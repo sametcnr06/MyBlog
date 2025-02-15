@@ -1,22 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Business.Abstract;
+using MyBlog.Core.Dtos;
+using MyBlog.DataAccess.Contexts;
 using MyBlog.Entities.Identity;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MyBlog.Business.Concrete
 {
     public class RoleManager : IRoleService
     {
         private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly UserManager<ApplicationUser> _userManager; // Kullanıcı işlemleri için UserManager eklendi
+        private readonly UserManager<ApplicationUser> _userManager; // Kullanıcı işlemleri için UserManager eklendid
+        private readonly MyBlogContext _context; // Kullanıcı işlemleri için UserManager eklendid
 
-        public RoleManager(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
+        public RoleManager(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager, MyBlogContext context)
         {
             _roleManager = roleManager; // Dependency Injection
             _userManager = userManager; // UserManager Dependency Injection
+            _context = context;
         }
 
         public async Task<List<ApplicationRole>> GetAllRolesAsync()
@@ -62,5 +63,29 @@ namespace MyBlog.Business.Concrete
             var usersInRole = await _userManager.GetUsersInRoleAsync(roleName);
             return usersInRole.ToList();
         }
+
+        public List<UserRoleDto> GetList()
+        {
+            var result = _context.UserRoles
+    .GroupBy(x => new { x.RoleId })
+    .Select(group => new UserRoleDto
+    {
+        Name = _context.Roles.FirstOrDefault(r => r.Id == group.Key.RoleId).Name, // Role tablosundan ismi al
+        UserCount = group.Count(),
+        //UserRoles = group.ToList() // ApplicationUserRole nesnelerini de döndür
+    })
+    .ToList();
+
+            return result;
+        }
+
+        //public Task<bool> CreateRoleUserAsync(ApplicationRole roleUser)
+        //{
+        //    if ( RoleExistsAsync(roleName)) // Eğer rol zaten varsa
+        //        return false;
+
+        //    var result =  _roleManager.CreateAsync(new ApplicationUserRole {  RoleId = roleUser.Id, UserId = roleUser.Id });
+        //    return result.Succeeded;
+        //}
     }
 }

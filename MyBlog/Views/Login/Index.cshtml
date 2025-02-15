@@ -1,27 +1,85 @@
 ﻿@{
+    // Login sayfası için özel layout kullanılıyor.
+    Layout = "~/Views/Login/_AdminLayout.cshtml";
     ViewData["Title"] = "Giriş Yap";
 }
 
-<h2>Giriş Yap</h2>
+<div class="login-form">
+    <h2 class="text-center mb-4">Giriş Yap</h2>
+    <form asp-action="Index" method="post">
+        <!-- Kullanıcı Adı Alanı -->
+        <div class="mb-3">
+            <label for="username" class="form-label">Kullanıcı Adı</label>
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-user"></i>
+                </span>
+                <input type="text" name="username" id="username" class="form-control" placeholder="Kullanıcı Adınızı giriniz" required />
+            </div>
+        </div>
 
-<form asp-action="Index" method="post">
-    <div class="form-group">
-        <label for="username">Kullanıcı Adı</label>
-        <input type="text" name="username" id="username" class="form-control" />
-    </div>
+        <!-- Şifre Alanı -->
+        <div class="mb-3">
+            <label for="password" class="form-label">Şifre</label>
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fas fa-lock"></i>
+                </span>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Şifrenizi giriniz" required />
+                <!-- Göz ikonu: basılı tutulduğu sürece şifre görünür olacak -->
+                <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                    <i class="fas fa-eye"></i>
+                </span>
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="password">Şifre</label>
-        <input type="password" name="password" id="password" class="form-control" />
-    </div>
+        <!-- Beni Hatırla -->
+        <div class="form-check mb-3">
+            <input type="checkbox" name="rememberMe" id="rememberMe" class="form-check-input" />
+            <label for="rememberMe" class="form-check-label">Beni Hatırla</label>
+        </div>
 
-    <div class="form-check">
-        <input type="checkbox" name="rememberMe" id="rememberMe" class="form-check-input" />
-        <label for="rememberMe" class="form-check-label">Beni Hatırla</label>
-    </div>
+        <!-- Şifremi Unuttum Linki -->
+        <div class="mb-3 text-end">
+            <a href="#" id="forgotPassword">Şifremi Unuttum?</a>
+        </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Giriş Yap</button>
+        <!-- Giriş Butonu -->
+        <div class="d-grid mb-3">
+            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+        </div>
 
-    <p>Hesabınız yok mu? <a asp-controller="Register" asp-action="Index">Kayıt Ol</a></p>
+        <!-- Kayıt Ol Yönlendirmesi -->
+        <div class="text-center">
+            <p>Hesabınız yok mu? <a asp-controller="Register" asp-action="Index">Kayıt Ol</a></p>
+        </div>
+    </form>
+</div>
 
-</form>
+@section Scripts {
+    <script>
+        // Şifre görünürlüğü için göz ikonuna event ekleniyor.
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+
+        // İkon basılı tutulduğunda şifre metin olarak gösterilsin.
+        togglePassword.addEventListener('mousedown', function () {
+            passwordInput.type = 'text';
+        });
+
+        // İkon bırakıldığında şifre tekrar gizlensin.
+        togglePassword.addEventListener('mouseup', function () {
+            passwordInput.type = 'password';
+        });
+        // Fare ikon üzerinden ayrılırsa da şifre gizlenmeli.
+        togglePassword.addEventListener('mouseleave', function () {
+            passwordInput.type = 'password';
+        });
+
+        // Şifremi Unuttum linkine tıklandığında bilgi mesajı gösterilsin.
+        document.getElementById('forgotPassword').addEventListener('click', function (e) {
+            e.preventDefault();
+            alert("Şifremi Unuttum özelliği şu an aktif değildir. Lütfen destek ekibi ile iletişime geçiniz.");
+        });
+    </script>
+}

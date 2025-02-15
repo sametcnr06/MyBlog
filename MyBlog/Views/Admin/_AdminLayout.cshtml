@@ -11,7 +11,7 @@
     <div id="wrapper">
         <!-- Sidebar -->
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/Admin">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center">
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-laugh-wink"></i>
                 </div>
@@ -19,7 +19,7 @@
             </a>
             <hr class="sidebar-divider my-0">
             <li class="nav-item active">
-                <a class="nav-link" href="/Admin">
+                <a class="nav-link" asp-action="Index" asp-controller="Admin">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span>
                 </a>
@@ -52,8 +52,6 @@
                     <i class="fas fa-check-circle me-2"></i> Blog Onay Listesi
                 </a>
             </li>
-
-            <!-- ✅ Kategori ve Etiket Yönetimi -->
             <li class="nav-item">
                 <a class="nav-link" asp-action="Index" asp-controller="Category">
                     <i class="fas fa-th-list me-2"></i> Kategori Yönetimi
@@ -64,8 +62,11 @@
                     <i class="fas fa-tags me-2"></i> Etiket Yönetimi
                 </a>
             </li>
-            <!-- ✅ Kategori ve Etiket Yönetimi Sonu -->
-
+            <li class="nav-item">
+                <a class="nav-link" asp-action="UnapprovedComments" asp-controller="Comment">
+                    <i class="fas fa-comments"></i> Yorum Onayı
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="/Admin/Raporlar">
                     <i class="fas fa-chart-bar"></i>
@@ -78,6 +79,7 @@
             </div>
         </ul>
         <!-- Sidebar Sonu -->
+
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
@@ -88,11 +90,13 @@
                     </button>
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+                               role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Admin</span>
                                 <img class="img-profile rounded-circle" src="/img/undraw_profile.svg">
                             </a>
-                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                 aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="#">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profilim
@@ -102,7 +106,7 @@
                                     Ayarlar
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="/Account/Logout">
+                                <a class="dropdown-item" href="/Home/Logout">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Çıkış Yap
                                 </a>
@@ -111,12 +115,29 @@
                     </ul>
                 </nav>
                 <!-- Topbar Sonu -->
+
+                <div class="container">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                            <div class="alert alert-success">
+                            @TempData["SuccessMessage"]
+                            </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                            <div class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                            </div>
+                    }
+                </div>
+
                 <!-- Sayfa İçeriği -->
                 <div class="container-fluid">
-                    @RenderBody() <!-- View'den gelen içerik buraya yansır -->
+                    @RenderBody() 
                 </div>
                 <!-- Sayfa İçeriği Sonu -->
             </div>
+
             <!-- Footer -->
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
@@ -128,10 +149,12 @@
         </div>
         <!-- Content Wrapper Sonu -->
     </div>
+
     <!-- Scriptler -->
     <script src="/vendor/jquery/jquery.min.js"></script>
     <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="/js/sb-admin-2.min.js"></script>
     <script src="/js/modal-loader.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
