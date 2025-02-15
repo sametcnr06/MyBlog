@@ -22,7 +22,7 @@ namespace MyBlog.Controllers
         }
 
         // 🏠 **Admin Paneli Ana Sayfası**
-        public IActionResult Index()
+        public IActionResult Index() //anasayfa
         {
             ViewData["Title"] = "Admin Dashboard"; // Sayfa başlığını belirle
             return View(); // Admin paneline yönlendir
